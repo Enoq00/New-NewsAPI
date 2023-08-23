@@ -7,6 +7,11 @@ using StackExchange.Redis;
 using Microsoft.EntityFrameworkCore;
 using News.DAL;
 using News.DAL.Entities;
+using NewsAPI.Models;
+using System.IO;
+using System.Text.Json.Serialization;
+using Newtonsoft.Json;
+using System.Linq;
 
 namespace NewsAPI.Services
 {
@@ -15,20 +20,6 @@ namespace NewsAPI.Services
         private static IDatabase Redis => RedisService.GetDB;
 
         private readonly NewsDbContext _newsDbContext;
-
-        public static Dictionary<int, string> _creators = new Dictionary<int, string>()
-        {
-           { 1,"Emily McGarvey"},
-           { 2,"Lucy Williamson"},
-           { 3,"Christiane Amanpour"},
-           { 4,"Brian Williams"},
-           { 5,"David Muir"},
-           { 6,"Wolf Blitzer"},
-           { 7,"Megyn Kelly"},
-           { 8,"Lester Holt"},
-           { 9,"Fareed Zakariar"},
-           { 10,"Sean Hannity"},
-        };
 
         public NewsService(NewsDbContext newsDbContext)
         {
@@ -102,13 +93,13 @@ namespace NewsAPI.Services
             return news;
         }
 
-        public async Task Add(AddInputNewsModel addNews)
+        public async Task Add(int userId, AddInputNewsModel addNews)
         {
             NewsEntity news = new NewsEntity
             {
                 Title = addNews.Title,
                 Content = addNews.Content,
-                CreatorName = _creators[addNews.CreatorId],
+                CreatorName = AccountService.Users.Value.Single(u=>u.Id == userId).Name,
                 CreateDate = DateTime.Now.ToString()
             };
 
@@ -134,7 +125,7 @@ namespace NewsAPI.Services
             }
         }
 
-        public async Task Update(long newsId, UpdateInputNewsModel updateNews)
+        public async Task Update(int userId, long newsId, UpdateInputNewsModel updateNews)
         {
             var oldNews = await _newsDbContext.News.FindAsync(newsId);
 
@@ -143,7 +134,7 @@ namespace NewsAPI.Services
                 throw new KeyNotFoundException();
             }
 
-            CheckAndUpdateNews(oldNews, updateNews);
+            CheckAndUpdateNews(userId, oldNews, updateNews);
             await _newsDbContext.SaveChangesAsync();
 
             HashEntry[] hashEntries =
@@ -151,13 +142,13 @@ namespace NewsAPI.Services
                new HashEntry(Keys.FieldTitle, updateNews.Title),
                new HashEntry(Keys.FieldContent, updateNews.Content),
                new HashEntry(Keys.FieldUpdateDate, DateTime.Now.ToString()),
-               new HashEntry(Keys.FieldUpdaterCreatorName, _creators[updateNews.UpdateCreatorId])
+               new HashEntry(Keys.FieldUpdaterCreatorName, AccountService.Users.Value.Single(u=>u.Id == userId).Name)
             };
 
             await Redis.HashSetAsync(Keys.KeyNews + newsId, hashEntries);
         }
 
-        public async Task Delete(long newsId)
+        public async Task Delete(int userId, long newsId)
         {
             var news = await _newsDbContext.News.FindAsync(newsId);
 
@@ -172,7 +163,7 @@ namespace NewsAPI.Services
             await Redis.KeyDeleteAsync(Keys.KeyNews + newsId);
         }
 
-        private void CheckAndUpdateNews(NewsEntity oldNews, UpdateInputNewsModel updateNews)
+        private void CheckAndUpdateNews(int userId, NewsEntity oldNews, UpdateInputNewsModel updateNews)
         {
             if (!oldNews.Title.Equals(updateNews))
             {
@@ -183,7 +174,7 @@ namespace NewsAPI.Services
                 oldNews.Content = updateNews.Title;
             }
 
-            oldNews.UpdateCreatorName = _creators[updateNews.UpdateCreatorId];
+            oldNews.UpdateCreatorName = AccountService.Users.Value.Single(u => u.Id == userId).Name;
             oldNews.UpdateDate = DateTime.Now.ToString();
         }
     }

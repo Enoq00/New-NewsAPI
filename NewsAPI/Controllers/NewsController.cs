@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using News.DAL.Entities;
 using NewsAPI.Entities;
@@ -11,16 +12,19 @@ namespace NewsAPI.Controllers
 {
     [ApiController]
     [Route("[controller]")]
+    [Authorize]
     public class NewsController : Controller
     {
         private readonly ILogger<NewsController> _logger;
 
         public readonly NewsService _newsService;
+        private readonly AccountService _accountService;
 
-        public NewsController(ILogger<NewsController> logger, NewsService newssService)
+        public NewsController(ILogger<NewsController> logger, NewsService newssService, AccountService accountService)
         {
             _logger = logger;
             _newsService = newssService;
+            _accountService = accountService;
         }
 
         [HttpGet()]
@@ -38,7 +42,9 @@ namespace NewsAPI.Controllers
         [HttpPost]
         public async Task<ActionResult> Post(AddInputNewsModel news)
         {
-            await _newsService.Add(news);
+            var userId = _accountService.GetUserId(HttpContext);
+
+            await _newsService.Add(userId, news);
 
             return NoContent();
         }
@@ -46,7 +52,8 @@ namespace NewsAPI.Controllers
         [HttpPut("{newsId}")]
         public async Task<ActionResult> Put(long newsId, [FromBody] UpdateInputNewsModel news)
         {
-            await _newsService.Update(newsId, news);
+            var userId = _accountService.GetUserId(HttpContext);
+            await _newsService.Update(userId, newsId, news);
 
             return NoContent();
         }
@@ -54,7 +61,9 @@ namespace NewsAPI.Controllers
         [HttpDelete("{newsId}")]
         public async Task<ActionResult> Delete(long newsId)
         {
-            await _newsService.Delete(newsId);
+            var userId = _accountService.GetUserId(HttpContext);
+
+            await _newsService.Delete(userId, newsId);
 
             return NoContent();
         }

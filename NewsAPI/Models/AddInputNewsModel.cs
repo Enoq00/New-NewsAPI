@@ -7,8 +7,5 @@ namespace NewsAPI.Entities.Models
         public string Title { get; set; }
 
         public string Content { get; set; }
-
-        [Range(1,10)]
-        public int CreatorId { get; set; }
     }
 }

@@ -11,10 +11,10 @@ namespace NewsAPI.Abstractions
 
         public Task<NewsEntity> Get(long newsId);
 
-        public Task Add(AddInputNewsModel news);
+        public Task Add(int userId, AddInputNewsModel news);
 
-        public Task Update(long newsId, UpdateInputNewsModel news);
+        public Task Update(int userId, long newsId, UpdateInputNewsModel news);
 
-        public Task Delete(long newsId);
+        public Task Delete(int userId, long newsId);
     }
 }
