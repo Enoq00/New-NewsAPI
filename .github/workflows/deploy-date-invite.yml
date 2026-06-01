@@ -20,16 +20,16 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  deploy:
+  # Enable Pages (source = GitHub Actions) and build the artifact.
+  # This job has NO environment mapping, so it is never gated and can turn
+  # Pages on via the API the first time it runs.
+  build:
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Configure Pages
+      - name: Configure Pages (enable if needed)
         uses: actions/configure-pages@v5
         with:
           enablement: true
@@ -39,6 +39,15 @@ jobs:
         with:
           path: docs
 
+  # Deploy the artifact. Runs after Pages is enabled, so the github-pages
+  # environment gate is satisfied.
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
