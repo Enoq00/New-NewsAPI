@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>A little question for you… 💌</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --pink: #ff4d8d;
+    --pink-deep: #d62e6c;
+    --grape: #7b4dff;
+    --gold: #ffc44d;
+    --ink: #4a2c43;
+    --soft: #8a6f82;
+    --glass: rgba(255,255,255,0.72);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+
+  body {
+    font-family: "Quicksand", system-ui, sans-serif;
+    color: var(--ink);
+    min-height: 100vh;
+    overflow-x: hidden;
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+    /* animated dreamy gradient */
+    background: linear-gradient(-45deg, #ffd0e4, #ffe0ef, #e7d6ff, #d6f0ff, #ffe7d6);
+    background-size: 400% 400%;
+    animation: drift 18s ease infinite;
+  }
+  @keyframes drift {
+    0%   { background-position: 0% 50%; }
+    50%  { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  /* soft glowing orbs */
+  .orb { position: fixed; border-radius: 50%; filter: blur(60px); opacity: 0.45; z-index: 0; pointer-events: none; }
+  .orb.a { width: 380px; height: 380px; background: #ff8fc0; top: -120px; left: -120px; animation: float1 14s ease-in-out infinite; }
+  .orb.b { width: 320px; height: 320px; background: #9d7bff; bottom: -120px; right: -100px; animation: float2 16s ease-in-out infinite; }
+  .orb.c { width: 260px; height: 260px; background: #ffd98a; top: 40%; right: 10%; animation: float1 20s ease-in-out infinite; }
+  @keyframes float1 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(40px,30px)} }
+  @keyframes float2 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(-40px,-30px)} }
+
+  /* floating hearts */
+  .floaty {
+    position: fixed; top: -50px; opacity: 0.7;
+    animation: fall linear infinite; pointer-events: none; z-index: 1; user-select: none;
+  }
+  @keyframes fall {
+    0% { transform: translateY(-10vh) rotate(0); opacity: 0; }
+    12% { opacity: .85; }
+    100% { transform: translateY(112vh) rotate(360deg); opacity: 0; }
+  }
+
+  .stage { position: relative; z-index: 3; width: calc(100% - 28px); max-width: 480px; }
+
+  .card {
+    background: var(--glass);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(255,255,255,0.6);
+    border-radius: 30px;
+    box-shadow: 0 24px 70px rgba(214,46,108,0.22), inset 0 1px 0 rgba(255,255,255,0.7);
+    padding: 42px 34px;
+    text-align: center;
+    animation: rise 0.6s cubic-bezier(.2,1.3,.35,1) both;
+  }
+  @keyframes rise { 0%{ transform: translateY(24px) scale(.96); opacity:0 } 100%{ transform: none; opacity:1 } }
+
+  .eyebrow { font-size: 13px; letter-spacing: 3px; text-transform: uppercase; color: var(--pink-deep); font-weight: 700; opacity:.85; }
+
+  h1 {
+    font-family: "Fraunces", serif;
+    font-weight: 600;
+    font-size: clamp(28px, 7vw, 38px);
+    line-height: 1.12; margin: 10px 0 4px;
+    color: var(--pink-deep);
+  }
+  h1 em { font-style: italic; color: var(--grape); }
+  h2 { font-family: "Fraunces", serif; font-weight: 600; font-size: 27px; color: var(--pink-deep); margin-bottom: 4px; }
+
+  .sub { font-size: 16px; color: var(--soft); min-height: 22px; margin: 12px 0 26px; transition: opacity .25s; }
+  .typing::after { content:"▍"; animation: blink 1s steps(1) infinite; color: var(--pink); }
+  @keyframes blink { 50%{ opacity:0 } }
+
+  .mascot {
+    width: 150px; height: 150px; margin: 4px auto 6px;
+    border-radius: 50%;
+    display: grid; place-items: center; font-size: 80px;
+    background: radial-gradient(circle at 35% 30%, #fff, #ffe2ef 60%, #f1e0ff);
+    box-shadow: 0 14px 30px rgba(214,46,108,0.25), inset 0 0 0 4px rgba(255,255,255,.7);
+    animation: bob 2.6s ease-in-out infinite;
+  }
+  @keyframes bob { 0%,100%{ transform: translateY(0) rotate(-2deg) } 50%{ transform: translateY(-12px) rotate(2deg) } }
+
+  .btn-row { display: flex; gap: 16px; justify-content: center; align-items: center; flex-wrap: wrap; min-height: 70px; margin-top: 6px; }
+
+  button { font-family: "Quicksand", sans-serif; font-weight: 700; border: none; border-radius: 999px; cursor: pointer; transition: transform .15s ease, box-shadow .2s ease, filter .2s; }
+
+  .btn-yes {
+    background: linear-gradient(135deg, var(--pink), var(--grape));
+    color: #fff; font-size: 20px; padding: 16px 40px;
+    box-shadow: 0 10px 26px rgba(255,77,141,.5);
+    position: relative; overflow: hidden;
+  }
+  .btn-yes::after {
+    content:""; position:absolute; top:0; left:-120%; width:60%; height:100%;
+    background: linear-gradient(120deg, transparent, rgba(255,255,255,.55), transparent);
+    transform: skewX(-20deg); animation: shine 3.2s ease-in-out infinite;
+  }
+  @keyframes shine { 0%,60%{ left:-120% } 100%{ left:160% } }
+  .btn-yes:hover { transform: translateY(-2px) scale(1.06); filter: brightness(1.05); }
+
+  .btn-no {
+    background: #fff; color: #b07; font-size: 15px; padding: 12px 26px;
+    border: 2px solid #ffd0e2;
+  }
+  .btn-no.runaway { position: fixed; z-index: 60; transition: top .18s ease, left .18s ease, transform .18s ease; }
+
+  .hidden { display: none !important; }
+
+  /* progress */
+  .progress { display:flex; gap:8px; justify-content:center; margin-bottom: 20px; }
+  .dot { width: 9px; height: 9px; border-radius: 50%; background: rgba(214,46,108,.22); transition: all .3s; }
+  .dot.active { background: linear-gradient(135deg,var(--pink),var(--grape)); transform: scale(1.4); box-shadow: 0 0 0 4px rgba(255,77,141,.15); }
+
+  /* step 2 pickers */
+  .field-label { text-align:left; font-weight:700; color: var(--pink-deep); margin: 16px 2px 7px; font-size: 14px; letter-spacing:.3px; }
+  input[type="date"], input[type="time"] {
+    width: 100%; padding: 13px 14px; border-radius: 15px; border: 2px solid #ffd6e6;
+    font-size: 15px; font-family: inherit; background:#fff; color: var(--ink);
+  }
+  input:focus { outline: none; border-color: var(--pink); box-shadow: 0 0 0 4px rgba(255,77,141,.12); }
+
+  .options { display:grid; grid-template-columns: 1fr 1fr; gap: 11px; margin: 6px 0 6px; }
+  .opt {
+    background:#fff; border:2px solid #ffdcea; border-radius: 18px; padding: 14px 8px;
+    font-size: 14px; font-weight: 700; color:#6a4a5a; cursor:pointer;
+    transition: all .15s ease; display:flex; flex-direction:column; gap:5px; align-items:center;
+  }
+  .opt .emoji { font-size: 30px; line-height:1; }
+  .opt:hover { transform: translateY(-3px); border-color: var(--pink); box-shadow: 0 8px 18px rgba(255,77,141,.18); }
+  .opt.selected { background: linear-gradient(135deg, var(--pink), var(--grape)); color:#fff; border-color: transparent; box-shadow: 0 10px 22px rgba(123,77,255,.4); transform: translateY(-2px); }
+  .opt.selected .desc { color: rgba(255,255,255,.9); }
+  .opt .desc { font-size: 11px; font-weight: 600; color:#a98; }
+
+  .btn-wide { width:100%; margin-top: 18px; }
+
+  /* step 3 ticket */
+  .ticket {
+    position: relative; text-align:left; margin: 16px 0 8px;
+    background: linear-gradient(135deg, #fff, #fff4fa);
+    border-radius: 22px; padding: 22px 22px 20px;
+    box-shadow: inset 0 0 0 2px #ffe0ec, 0 12px 30px rgba(214,46,108,.14);
+  }
+  .ticket::before, .ticket::after {
+    content:""; position:absolute; width: 26px; height: 26px; border-radius:50%;
+    background: var(--glass); top: 50%; transform: translateY(-50%);
+  }
+  .ticket::before { left: -13px; box-shadow: inset -3px 0 6px rgba(0,0,0,.06); }
+  .ticket::after  { right: -13px; box-shadow: inset 3px 0 6px rgba(0,0,0,.06); }
+  .ticket .tk-head { font-family:"Fraunces",serif; font-weight:600; font-size: 18px; color: var(--grape); display:flex; align-items:center; justify-content:space-between; border-bottom: 2px dashed #ffd0e2; padding-bottom: 10px; margin-bottom: 12px; }
+  .tk-line { display:flex; gap:12px; align-items:flex-start; margin: 11px 0; font-size: 15px; }
+  .tk-line .ic { font-size: 20px; width: 26px; text-align:center; }
+  .tk-line b { color: var(--pink-deep); display:block; font-size: 12px; letter-spacing:.4px; text-transform:uppercase; }
+  .tk-line span.val { font-weight: 600; }
+  .note { font-family:"Fraunces",serif; font-style: italic; font-size: 15.5px; color: var(--soft); margin: 16px 4px 4px; line-height:1.5; }
+
+  .confetti { position: fixed; top: -10px; width: 9px; height: 15px; z-index: 50; pointer-events: none; border-radius: 2px; animation: confettiFall linear forwards; }
+  @keyframes confettiFall { to { transform: translateY(108vh) rotate(720deg); opacity: .15; } }
+
+  .credit { text-align:center; margin-top: 14px; font-size: 12px; color: rgba(122,90,118,.6); z-index:3; position:relative; }
+</style>
+</head>
+<body>
+  <div class="orb a"></div><div class="orb b"></div><div class="orb c"></div>
+
+  <div class="stage">
+    <!-- STEP 1 -->
+    <div class="card" id="step1">
+      <div class="progress"><span class="dot active"></span><span class="dot"></span><span class="dot"></span></div>
+      <div class="eyebrow">a little question</div>
+      <div class="mascot" id="mascot">🥺</div>
+      <h1>Will you go on a <em>date</em> with me?</h1>
+      <p class="sub typing" id="taunt">There's only one right answer…</p>
+      <div class="btn-row" id="btnRow">
+        <button class="btn-yes" id="yesBtn">Yes 💖</button>
+        <button class="btn-no" id="noBtn">No</button>
+      </div>
+    </div>
+
+    <!-- STEP 2 -->
+    <div class="card hidden" id="step2">
+      <div class="progress"><span class="dot"></span><span class="dot active"></span><span class="dot"></span></div>
+      <div class="eyebrow">you're in charge</div>
+      <div class="mascot">🥰</div>
+      <h2>Eee! Let's plan it ✨</h2>
+      <p class="sub">Pick the day, the time, and the vibe — your call entirely.</p>
+
+      <div class="field-label">📅 Our day</div>
+      <input type="date" id="dateInput" />
+
+      <div class="field-label">⏰ Our time</div>
+      <input type="time" id="timeInput" value="19:00" />
+
+      <div class="field-label">✨ The vibe</div>
+      <div class="options" id="vibeOptions">
+        <div class="opt" data-vibe="Cozy coffee &amp; deep talks" data-emoji="☕" data-line="slow mornings, warm mugs, and conversations that lose track of time">
+          <span class="emoji">☕</span>Cozy Coffee<span class="desc">slow & sweet</span></div>
+        <div class="opt" data-vibe="Candle-lit dinner" data-emoji="🍝" data-line="soft candlelight, good food, and you looking incredible across the table">
+          <span class="emoji">🍝</span>Fancy Dinner<span class="desc">dressed up</span></div>
+        <div class="opt" data-vibe="Adventure &amp; sunset" data-emoji="🌅" data-line="somewhere new, golden-hour light, and a sunset we won't forget">
+          <span class="emoji">🌅</span>Adventure<span class="desc">spontaneous</span></div>
+        <div class="opt" data-vibe="Movie night in" data-emoji="🎬" data-line="blankets, snacks, a great film, and zero reasons to leave the couch">
+          <span class="emoji">🎬</span>Movie Night<span class="desc">comfy</span></div>
+        <div class="opt" data-vibe="Dancing all night" data-emoji="💃" data-line="music too loud, feet that won't stop, and a night that runs late">
+          <span class="emoji">💃</span>Dancing<span class="desc">electric</span></div>
+        <div class="opt" data-vibe="Surprise me" data-emoji="🎁" data-line="you trust me, I plan everything, and you just show up and smile">
+          <span class="emoji">🎁</span>Surprise Me<span class="desc">trust fall</span></div>
+      </div>
+
+      <button class="btn-yes btn-wide" id="confirmBtn">Make it official 🔒</button>
+    </div>
+
+    <!-- STEP 3 -->
+    <div class="card hidden" id="step3">
+      <div class="progress"><span class="dot"></span><span class="dot"></span><span class="dot active"></span></div>
+      <div class="eyebrow">it's a date</div>
+      <div class="mascot">💞</div>
+      <h2>Officially a date 🎀</h2>
+      <p class="sub">Here's the vibe of our date — saved to memory:</p>
+
+      <div class="ticket">
+        <div class="tk-head"><span>💌 Date Pass</span><span id="tkVibeEmoji">✨</span></div>
+        <div class="tk-line"><span class="ic">📅</span><span><b>When</b><span class="val" id="sumDate">—</span></span></div>
+        <div class="tk-line"><span class="ic">⏰</span><span><b>Time</b><span class="val" id="sumTime">—</span></span></div>
+        <div class="tk-line"><span class="ic">✨</span><span><b>Vibe</b><span class="val" id="sumVibe">—</span></span></div>
+        <div class="tk-line"><span class="ic">⏳</span><span><b>Countdown</b><span class="val" id="sumCountdown">—</span></span></div>
+      </div>
+
+      <p class="note" id="vibeNote">Picture it…</p>
+      <button class="btn-yes btn-wide" id="restartBtn">Aww — do it again 🔁</button>
+    </div>
+
+    <div class="credit">made with 💗 just for you</div>
+  </div>
+
+<script>
+  // ---------- floating hearts ----------
+  const hearts = ["💕","💖","💗","💘","💝","🌸","✨","💫"];
+  setInterval(() => {
+    const h = document.createElement("div");
+    h.className = "floaty";
+    h.textContent = hearts[Math.floor(Math.random()*hearts.length)];
+    h.style.left = Math.random()*100 + "vw";
+    h.style.fontSize = (16 + Math.random()*24) + "px";
+    const dur = 6 + Math.random()*6;
+    h.style.animationDuration = dur + "s";
+    document.body.appendChild(h);
+    setTimeout(() => h.remove(), dur*1000);
+  }, 550);
+
+  // ---------- typewriter intro line ----------
+  const taunt = document.getElementById("taunt");
+  const introMsg = "There's only one right answer…";
+  let ti = 0;
+  function typeIntro() {
+    if (ti <= introMsg.length) { taunt.textContent = introMsg.slice(0, ti++); setTimeout(typeIntro, 55); }
+    else { taunt.classList.remove("typing"); }
+  }
+  taunt.textContent = ""; typeIntro();
+
+  // ---------- STEP 1: runaway No ----------
+  const noBtn = document.getElementById("noBtn");
+  const yesBtn = document.getElementById("yesBtn");
+  const mascot = document.getElementById("mascot");
+  const taunts = [
+    "Nope — can't catch me! 😜",
+    "Are you sure? Try again 😏",
+    "The No button is far too shy 🙈",
+    "It physically refuses to be pressed 😂",
+    "Just say Yes already 🥰",
+    "Resistance is adorable but futile 💘",
+    "That button is allergic to fingers 🤧",
+    "Plot twist: there is no No 💁",
+  ];
+  const moods = ["🥺","😳","😅","🙃","😘","🤭","😇","🫶"];
+  let dodge = 0;
+
+  function fleeNo(e) {
+    if (e) e.preventDefault();
+    noBtn.classList.add("runaway");
+    const pad = 18;
+    const bw = noBtn.offsetWidth || 90, bh = noBtn.offsetHeight || 48;
+    const x = Math.max(pad, Math.random()*(window.innerWidth  - bw - pad));
+    const y = Math.max(pad, Math.random()*(window.innerHeight - bh - pad));
+    noBtn.style.left = x + "px";
+    noBtn.style.top  = y + "px";
+    noBtn.style.transform = "rotate(" + (Math.random()*44-22) + "deg)";
+
+    taunt.classList.remove("typing");
+    taunt.textContent = taunts[dodge % taunts.length];
+    mascot.textContent = moods[dodge % moods.length];
+
+    dodge++;
+    yesBtn.style.transform = "scale(" + Math.min(1.7, 1 + 0.07*dodge) + ")";
+  }
+  ["mouseover","mousedown","click","focus"].forEach(ev => noBtn.addEventListener(ev, fleeNo));
+  noBtn.addEventListener("touchstart", fleeNo, { passive:false });
+
+  // ---------- transitions ----------
+  const step1 = document.getElementById("step1");
+  const step2 = document.getElementById("step2");
+  const step3 = document.getElementById("step3");
+
+  yesBtn.addEventListener("click", () => {
+    burst();
+    step1.classList.add("hidden");
+    step2.classList.remove("hidden");
+    const t = new Date(); t.setDate(t.getDate()+1);
+    document.getElementById("dateInput").value = t.toISOString().slice(0,10);
+  });
+
+  // ---------- STEP 2: vibe ----------
+  let vibe = null;
+  document.querySelectorAll("#vibeOptions .opt").forEach(opt => {
+    opt.addEventListener("click", () => {
+      document.querySelectorAll("#vibeOptions .opt").forEach(o => o.classList.remove("selected"));
+      opt.classList.add("selected");
+      vibe = { label: opt.dataset.vibe, emoji: opt.dataset.emoji, line: opt.dataset.line };
+    });
+  });
+
+  document.getElementById("confirmBtn").addEventListener("click", () => {
+    const d = document.getElementById("dateInput").value;
+    const tm = document.getElementById("timeInput").value;
+    if (!d)  return shake("Pick a day for us 📅");
+    if (!tm) return shake("Pick a time ⏰");
+    if (!vibe) return shake("Pick a vibe for our date ✨");
+
+    const dateObj = new Date(d + "T" + tm);
+    const prettyDate = new Date(d + "T00:00:00").toLocaleDateString(undefined, { weekday:"long", month:"long", day:"numeric" });
+    let [hh, mm] = tm.split(":").map(Number);
+    const ampm = hh >= 12 ? "PM" : "AM";
+    const prettyTime = (((hh+11)%12)+1) + ":" + String(mm).padStart(2,"0") + " " + ampm;
+
+    document.getElementById("sumDate").textContent = prettyDate;
+    document.getElementById("sumTime").textContent = prettyTime;
+    document.getElementById("sumVibe").textContent = vibe.emoji + "  " + vibe.label;
+    document.getElementById("tkVibeEmoji").textContent = vibe.emoji;
+    document.getElementById("vibeNote").textContent = "Picture it — " + vibe.line + ". I genuinely can't wait. 😊";
+
+    // live countdown
+    function tick() {
+      const diff = dateObj - new Date();
+      const el = document.getElementById("sumCountdown");
+      if (diff <= 0) { el.textContent = "It's time — let's go! 💕"; return; }
+      const days = Math.floor(diff/864e5);
+      const hrs  = Math.floor(diff%864e5/36e5);
+      const mins = Math.floor(diff%36e5/6e4);
+      el.textContent = (days?days+"d ":"") + hrs + "h " + mins + "m to go";
+    }
+    tick(); setInterval(tick, 30000);
+
+    burst();
+    step2.classList.add("hidden");
+    step3.classList.remove("hidden");
+  });
+
+  document.getElementById("restartBtn").addEventListener("click", () => location.reload());
+
+  // ---------- helpers ----------
+  function shake(msg) {
+    const c = step2;
+    c.animate([{transform:"translateX(0)"},{transform:"translateX(-8px)"},{transform:"translateX(8px)"},{transform:"translateX(0)"}],{duration:300});
+    const note = document.querySelector("#step2 .sub");
+    const old = note.textContent;
+    note.textContent = msg; note.style.color = "var(--pink-deep)";
+    setTimeout(() => { note.textContent = old; note.style.color = ""; }, 1800);
+  }
+
+  function burst() {
+    const colors = ["#ff4d8d","#7b4dff","#ffc44d","#06d6a0","#ff9e6d","#ff477e","#41d3ff"];
+    for (let i = 0; i < 90; i++) {
+      const c = document.createElement("div");
+      c.className = "confetti";
+      c.style.left = Math.random()*100 + "vw";
+      c.style.background = colors[Math.floor(Math.random()*colors.length)];
+      c.style.animationDuration = (1.6 + Math.random()*1.6) + "s";
+      c.style.animationDelay = (Math.random()*0.3) + "s";
+      if (Math.random() > .5) c.style.borderRadius = "50%";
+      document.body.appendChild(c);
+      setTimeout(() => c.remove(), 3400);
+    }
+  }
+</script>
+</body>
+</html>
