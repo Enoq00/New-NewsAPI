@@ -4,6 +4,11 @@ A fun, creatively-designed "ask someone out" web page (inspired by the Instagram
 Self-contained — just open `index.html` in any browser. No server, no build, no dependencies
 (fonts load from Google Fonts when online; it still works offline with system fonts).
 
+## Hosting (GitHub Pages)
+This folder is `docs/` so it can be published via GitHub Pages' "Deploy from a branch" mode.
+In **Settings → Pages**: set **Source = Deploy from a branch**, choose this branch, folder
+**`/docs`**, and Save. The page goes live at `https://enoq00.github.io/New-NewsAPI/`.
+
 ## The flow
 1. **The question** — "Will you go on a *date* with me?" with a **Yes** and a **No** button.
    The **No** button is impossible to press: it darts away from the cursor, dodges taps on

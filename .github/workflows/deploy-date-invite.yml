@@ -5,7 +5,7 @@ on:
     branches:
       - claude/dating-preference-page-bOu7e
     paths:
-      - "date-invite/**"
+      - "docs/**"
       - ".github/workflows/deploy-date-invite.yml"
   workflow_dispatch:
 
@@ -36,7 +36,7 @@ jobs:
       - name: Upload date-invite folder
         uses: actions/upload-pages-artifact@v3
         with:
-          path: date-invite
+          path: docs
 
       - name: Deploy to GitHub Pages
         id: deployment
