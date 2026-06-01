@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Will you go on a date with me? 💕</title>
+<style>
+  :root {
+    --pink: #ff5d8f;
+    --pink-dark: #e63971;
+    --cream: #fff0f5;
+    --purple: #8a4fff;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body { height: 100%; }
+
+  body {
+    font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+    background: linear-gradient(135deg, #ffd6e8 0%, #ffe9f2 40%, #e9d6ff 100%);
+    color: #3a2a3a;
+    min-height: 100vh;
+    overflow-x: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  /* floating hearts background */
+  .floaty {
+    position: fixed;
+    top: -50px;
+    font-size: 26px;
+    opacity: 0.7;
+    animation: fall linear infinite;
+    pointer-events: none;
+    z-index: 0;
+    user-select: none;
+  }
+  @keyframes fall {
+    0%   { transform: translateY(-10vh) rotate(0deg);   opacity: 0; }
+    10%  { opacity: 0.8; }
+    100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+  }
+
+  .card {
+    position: relative;
+    z-index: 2;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(8px);
+    border-radius: 28px;
+    box-shadow: 0 20px 60px rgba(230, 57, 113, 0.25);
+    padding: 44px 36px;
+    max-width: 460px;
+    width: calc(100% - 32px);
+    text-align: center;
+    animation: pop 0.5s cubic-bezier(.2,1.4,.4,1);
+  }
+  @keyframes pop {
+    0%   { transform: scale(0.7); opacity: 0; }
+    100% { transform: scale(1);   opacity: 1; }
+  }
+
+  h1 { font-size: 30px; line-height: 1.25; margin-bottom: 10px; color: var(--pink-dark); }
+  h2 { font-size: 24px; margin-bottom: 6px; color: var(--pink-dark); }
+  p.sub { font-size: 16px; color: #7a6a76; margin-bottom: 26px; }
+
+  .gif {
+    width: 180px; height: 180px;
+    margin: 0 auto 18px;
+    border-radius: 22px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 96px;
+    background: linear-gradient(135deg, #ffe0ec, #f3e0ff);
+    box-shadow: inset 0 0 0 3px rgba(255,93,143,0.3);
+    animation: bob 2.2s ease-in-out infinite;
+  }
+  @keyframes bob { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+
+  .btn-row {
+    display: flex; gap: 16px; justify-content: center; align-items: center;
+    flex-wrap: wrap; margin-top: 8px; min-height: 64px;
+  }
+
+  button {
+    font-family: inherit;
+    font-weight: 700;
+    border: none;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .btn-yes {
+    background: var(--pink);
+    color: #fff;
+    font-size: 20px;
+    padding: 16px 38px;
+    box-shadow: 0 8px 22px rgba(255,93,143,0.5);
+  }
+  .btn-yes:hover { transform: scale(1.08); box-shadow: 0 12px 28px rgba(255,93,143,0.6); }
+
+  .btn-no {
+    background: #fff;
+    color: #b58;
+    font-size: 16px;
+    padding: 12px 26px;
+    border: 2px solid #ffd0e0;
+    position: relative;
+  }
+
+  /* The runaway No button */
+  .btn-no.runaway {
+    position: fixed;
+    z-index: 50;
+    transition: top 0.18s ease, left 0.18s ease, transform 0.18s ease;
+  }
+
+  .hidden { display: none !important; }
+
+  /* step 2: date & time pickers */
+  .options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin: 8px 0 22px;
+  }
+  .opt {
+    background: #fff;
+    border: 2px solid #ffd6e8;
+    border-radius: 16px;
+    padding: 14px 10px;
+    font-size: 15px;
+    font-weight: 600;
+    color: #6a4a5a;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    display: flex; flex-direction: column; gap: 4px; align-items: center;
+  }
+  .opt .emoji { font-size: 28px; }
+  .opt:hover { transform: translateY(-3px); border-color: var(--pink); }
+  .opt.selected {
+    background: linear-gradient(135deg, var(--pink), var(--purple));
+    color: #fff;
+    border-color: transparent;
+    box-shadow: 0 8px 20px rgba(138,79,255,0.35);
+  }
+
+  .field-label {
+    text-align: left;
+    font-weight: 700;
+    color: var(--pink-dark);
+    margin: 14px 2px 6px;
+    font-size: 15px;
+  }
+
+  input[type="text"], input[type="date"], input[type="time"] {
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: 14px;
+    border: 2px solid #ffd6e8;
+    font-size: 15px;
+    font-family: inherit;
+    margin-bottom: 4px;
+  }
+  input:focus { outline: none; border-color: var(--pink); }
+
+  .vibe-summary {
+    background: linear-gradient(135deg, #fff, #fff0f7);
+    border-radius: 18px;
+    padding: 20px;
+    margin: 18px 0;
+    text-align: left;
+    box-shadow: inset 0 0 0 2px #ffe0ec;
+  }
+  .vibe-summary .line { font-size: 16px; margin: 8px 0; display: flex; gap: 10px; }
+  .vibe-summary .line b { color: var(--pink-dark); }
+
+  .confetti {
+    position: fixed; top: -10px; width: 10px; height: 16px;
+    z-index: 40; pointer-events: none; border-radius: 2px;
+    animation: confettiFall linear forwards;
+  }
+  @keyframes confettiFall {
+    to { transform: translateY(105vh) rotate(720deg); opacity: 0.2; }
+  }
+
+  .progress { display: flex; gap: 8px; justify-content: center; margin-bottom: 22px; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; background: #ffd0e0; transition: all .3s; }
+  .dot.active { background: var(--pink); transform: scale(1.3); }
+</style>
+</head>
+<body>
+
+<!-- STEP 1: The big question -->
+<div class="card" id="step1">
+  <div class="progress"><span class="dot active"></span><span class="dot"></span><span class="dot"></span></div>
+  <div class="gif">🥺</div>
+  <h1>Will you go on a date with me?</h1>
+  <p class="sub" id="noTaunt">Take your time… but choose wisely 😉</p>
+  <div class="btn-row" id="btnRow">
+    <button class="btn-yes" id="yesBtn">Yes 💖</button>
+    <button class="btn-no" id="noBtn">No</button>
+  </div>
+</div>
+
+<!-- STEP 2: Choose date, time & vibe -->
+<div class="card hidden" id="step2">
+  <div class="progress"><span class="dot"></span><span class="dot active"></span><span class="dot"></span></div>
+  <div class="gif">🥰</div>
+  <h2>Yay! I knew it 🎉</h2>
+  <p class="sub">Now the fun part — you pick everything.</p>
+
+  <div class="field-label">📅 Pick a day</div>
+  <input type="date" id="dateInput" />
+
+  <div class="field-label">⏰ Pick a time</div>
+  <input type="time" id="timeInput" value="19:00" />
+
+  <div class="field-label">✨ Pick the vibe</div>
+  <div class="options" id="vibeOptions">
+    <div class="opt" data-vibe="Cozy coffee & deep talks ☕"><span class="emoji">☕</span>Cozy Coffee</div>
+    <div class="opt" data-vibe="Fancy candle-lit dinner 🍝"><span class="emoji">🍝</span>Fancy Dinner</div>
+    <div class="opt" data-vibe="Adventure & sunset walk 🌅"><span class="emoji">🌅</span>Adventure</div>
+    <div class="opt" data-vibe="Movie night & cuddles 🎬"><span class="emoji">🎬</span>Movie Night</div>
+    <div class="opt" data-vibe="Dancing the night away 💃"><span class="emoji">💃</span>Dancing</div>
+    <div class="opt" data-vibe="Surprise me! 🎁"><span class="emoji">🎁</span>Surprise Me</div>
+  </div>
+
+  <button class="btn-yes" id="confirmBtn" style="width:100%;">Lock it in 🔒</button>
+</div>
+
+<!-- STEP 3: The vibe / summary -->
+<div class="card hidden" id="step3">
+  <div class="progress"><span class="dot"></span><span class="dot"></span><span class="dot active"></span></div>
+  <div class="gif">💞</div>
+  <h2>It's a date! 🎀</h2>
+  <p class="sub">Here's the vibe of our date:</p>
+  <div class="vibe-summary">
+    <div class="line">📅 <span><b>When:</b> <span id="sumDate">—</span></span></div>
+    <div class="line">⏰ <span><b>Time:</b> <span id="sumTime">—</span></span></div>
+    <div class="line">✨ <span><b>Vibe:</b> <span id="sumVibe">—</span></span></div>
+  </div>
+  <p class="sub" style="margin-bottom:8px;">Counting down the seconds already. See you there! 😘</p>
+  <button class="btn-yes" id="restartBtn" style="margin-top:6px;">Aww, do it again 🔁</button>
+</div>
+
+<script>
+  // ---------- floating hearts background ----------
+  const heartsArr = ["💕","💖","💗","💘","💝","❤️","🌸"];
+  function spawnHeart() {
+    const h = document.createElement("div");
+    h.className = "floaty";
+    h.textContent = heartsArr[Math.floor(Math.random()*heartsArr.length)];
+    h.style.left = Math.random()*100 + "vw";
+    h.style.fontSize = (18 + Math.random()*22) + "px";
+    const dur = 6 + Math.random()*6;
+    h.style.animationDuration = dur + "s";
+    document.body.appendChild(h);
+    setTimeout(() => h.remove(), dur*1000);
+  }
+  setInterval(spawnHeart, 600);
+
+  // ---------- STEP 1: runaway No button ----------
+  const noBtn   = document.getElementById("noBtn");
+  const yesBtn  = document.getElementById("yesBtn");
+  const taunt   = document.getElementById("noTaunt");
+  const taunts = [
+    "Nope, can't catch me! 😜",
+    "Are you sure? Try again 😏",
+    "The No button is shy 🙈",
+    "It really doesn't want to be pressed 😂",
+    "Just say Yes already 🥰",
+    "Resistance is futile 💘",
+    "That button is allergic to clicks 🤧",
+  ];
+  let taunting = false;
+
+  function fleeNo() {
+    if (!noBtn.classList.contains("runaway")) {
+      noBtn.classList.add("runaway");
+    }
+    const pad = 20;
+    const bw = noBtn.offsetWidth  || 90;
+    const bh = noBtn.offsetHeight || 48;
+    const maxX = window.innerWidth  - bw - pad;
+    const maxY = window.innerHeight - bh - pad;
+    const x = Math.max(pad, Math.random()*maxX);
+    const y = Math.max(pad, Math.random()*maxY);
+    noBtn.style.left = x + "px";
+    noBtn.style.top  = y + "px";
+    noBtn.style.transform = "rotate(" + (Math.random()*40-20) + "deg)";
+
+    taunt.textContent = taunts[Math.floor(Math.random()*taunts.length)];
+
+    // Each dodge makes Yes more tempting
+    const scale = Math.min(1.6, 1 + 0.06 * (++dodgeCount));
+    yesBtn.style.transform = "scale(" + scale + ")";
+  }
+  let dodgeCount = 0;
+
+  // Run away on any attempt to interact
+  noBtn.addEventListener("mouseover", fleeNo);
+  noBtn.addEventListener("mousedown", fleeNo);
+  noBtn.addEventListener("touchstart", function(e){ e.preventDefault(); fleeNo(); }, {passive:false});
+  noBtn.addEventListener("click", function(e){ e.preventDefault(); fleeNo(); });
+  // also flee if a keyboard user tabs/focuses it
+  noBtn.addEventListener("focus", fleeNo);
+
+  // ---------- transitions ----------
+  const step1 = document.getElementById("step1");
+  const step2 = document.getElementById("step2");
+  const step3 = document.getElementById("step3");
+
+  yesBtn.addEventListener("click", () => {
+    burstConfetti();
+    step1.classList.add("hidden");
+    step2.classList.remove("hidden");
+    // sensible default date = tomorrow
+    const t = new Date(); t.setDate(t.getDate()+1);
+    document.getElementById("dateInput").value = t.toISOString().slice(0,10);
+  });
+
+  // ---------- STEP 2: vibe selection ----------
+  let chosenVibe = null;
+  document.querySelectorAll("#vibeOptions .opt").forEach(opt => {
+    opt.addEventListener("click", () => {
+      document.querySelectorAll("#vibeOptions .opt").forEach(o => o.classList.remove("selected"));
+      opt.classList.add("selected");
+      chosenVibe = opt.dataset.vibe;
+    });
+  });
+
+  document.getElementById("confirmBtn").addEventListener("click", () => {
+    const d = document.getElementById("dateInput").value;
+    const tm = document.getElementById("timeInput").value;
+    if (!d) { alert("Pick a day for our date! 📅"); return; }
+    if (!tm) { alert("Pick a time! ⏰"); return; }
+    if (!chosenVibe) { alert("Pick a vibe for our date! ✨"); return; }
+
+    // pretty date
+    const dateObj = new Date(d + "T00:00:00");
+    const pretty = dateObj.toLocaleDateString(undefined, { weekday:"long", year:"numeric", month:"long", day:"numeric" });
+    // 12h time
+    let [hh, mm] = tm.split(":").map(Number);
+    const ampm = hh >= 12 ? "PM" : "AM";
+    const h12 = ((hh + 11) % 12) + 1;
+    const prettyTime = h12 + ":" + String(mm).padStart(2,"0") + " " + ampm;
+
+    document.getElementById("sumDate").textContent = pretty;
+    document.getElementById("sumTime").textContent = prettyTime;
+    document.getElementById("sumVibe").textContent = chosenVibe;
+
+    burstConfetti();
+    step2.classList.add("hidden");
+    step3.classList.remove("hidden");
+  });
+
+  document.getElementById("restartBtn").addEventListener("click", () => {
+    location.reload();
+  });
+
+  // ---------- confetti ----------
+  function burstConfetti() {
+    const colors = ["#ff5d8f","#8a4fff","#ffd166","#06d6a0","#ff9e6d","#ff477e"];
+    for (let i = 0; i < 80; i++) {
+      const c = document.createElement("div");
+      c.className = "confetti";
+      c.style.left = Math.random()*100 + "vw";
+      c.style.background = colors[Math.floor(Math.random()*colors.length)];
+      c.style.animationDuration = (1.5 + Math.random()*1.5) + "s";
+      c.style.animationDelay = (Math.random()*0.3) + "s";
+      document.body.appendChild(c);
+      setTimeout(() => c.remove(), 3200);
+    }
+  }
+</script>
+</body>
+</html>
