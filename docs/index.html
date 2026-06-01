@@ -202,7 +202,7 @@
       <div class="progress"><span class="dot active"></span><span class="dot"></span><span class="dot"></span></div>
       <div class="eyebrow">a little question</div>
       <div class="mascot" id="mascot">🥺</div>
-      <h1>Will you go on a <em>date</em> with me?</h1>
+      <h1>Will you go on a <em>date</em> with me, Anahit?</h1>
       <p class="sub typing" id="taunt">There's only one right answer…</p>
       <div class="btn-row" id="btnRow">
         <button class="btn-yes" id="yesBtn">Yes 💖</button>
@@ -226,8 +226,8 @@
 
       <div class="field-label">✨ The vibe</div>
       <div class="options" id="vibeOptions">
-        <div class="opt" data-vibe="Cozy coffee &amp; deep talks" data-emoji="☕" data-line="slow mornings, warm mugs, and conversations that lose track of time">
-          <span class="emoji">☕</span>Cozy Coffee<span class="desc">slow & sweet</span></div>
+        <div class="opt" data-vibe="Chilling at a Yerevan café" data-emoji="☕" data-line="your favourite Yerevan café, slow coffee, and conversations that lose track of time">
+          <span class="emoji">☕</span>Yerevan Café<span class="desc">your fave ☕</span></div>
         <div class="opt" data-vibe="Candle-lit dinner" data-emoji="🍝" data-line="soft candlelight, good food, and you looking incredible across the table">
           <span class="emoji">🍝</span>Fancy Dinner<span class="desc">dressed up</span></div>
         <div class="opt" data-vibe="Adventure &amp; sunset" data-emoji="🌅" data-line="somewhere new, golden-hour light, and a sunset we won't forget">
@@ -264,7 +264,7 @@
       <button class="btn-yes btn-wide" id="restartBtn">Aww — do it again 🔁</button>
     </div>
 
-    <div class="credit">made with 💗 just for you</div>
+    <div class="credit">made with 💗 just for Anahit</div>
   </div>
 
 <script>
@@ -282,9 +282,21 @@
     setTimeout(() => h.remove(), dur*1000);
   }, 550);
 
+  // ---------- a few personal touches about Anahit ----------
+  const HER = { name: "Anahit", birthday: "January 13", job: "graphic designer" };
+  const aboutHer = [
+    "A graphic designer with the best eye in all of Yerevan 🎨",
+    "Someone who turns a lazy Yerevan café afternoon into pure art ☕🎨",
+    "Pixel-perfect taste — and an even better smile 😌",
+    "Psst… an early happy birthday for January 13 🎂✨",
+    "The kind of person worth planning a whole day around 💫",
+    "Born January 13, brilliant ever since 🌟",
+  ];
+  const randomAbout = () => aboutHer[Math.floor(Math.random()*aboutHer.length)];
+
   // ---------- typewriter intro line ----------
   const taunt = document.getElementById("taunt");
-  const introMsg = "There's only one right answer…";
+  const introMsg = "Hey Anahit — there's only one right answer 😉";
   let ti = 0;
   function typeIntro() {
     if (ti <= introMsg.length) { taunt.textContent = introMsg.slice(0, ti++); setTimeout(typeIntro, 55); }
@@ -298,13 +310,13 @@
   const mascot = document.getElementById("mascot");
   const taunts = [
     "Nope — can't catch me! 😜",
-    "Are you sure? Try again 😏",
+    "Anahit, just say Yes already 🥰",
+    "Even a graphic designer can't redesign this into a No 🎨",
+    "It's running like it's late for a Yerevan café ☕",
     "The No button is far too shy 🙈",
-    "It physically refuses to be pressed 😂",
-    "Just say Yes already 🥰",
     "Resistance is adorable but futile 💘",
-    "That button is allergic to fingers 🤧",
-    "Plot twist: there is no No 💁",
+    "That button is allergic to your fingers 🤧",
+    "Plot twist: for Anahit, there is no No 💁",
   ];
   const moods = ["🥺","😳","😅","🙃","😘","🤭","😇","🫶"];
   // funny escape animations: [keyframe name, duration ms]
@@ -415,7 +427,7 @@
     document.getElementById("sumTime").textContent = prettyTime;
     document.getElementById("sumVibe").textContent = vibe.emoji + "  " + vibe.label;
     document.getElementById("tkVibeEmoji").textContent = vibe.emoji;
-    document.getElementById("vibeNote").textContent = "Picture it — " + vibe.line + ". I genuinely can't wait. 😊";
+    document.getElementById("vibeNote").textContent = "Anahit, picture it — " + vibe.line + ". " + randomAbout() + " I genuinely can't wait. 😊";
 
     // live countdown
     function tick() {
@@ -452,12 +464,13 @@
       method: "POST",
       headers: { "Content-Type": "application/json", "Accept": "application/json" },
       body: JSON.stringify({
-        _subject: "💕 She said YES — it's a date!",
+        _subject: "💕 Anahit said YES — it's a date!",
         _template: "table",
+        "Who": "Anahit — graphic designer, born January 13, loves Yerevan cafés ☕🎨",
         "When": date,
         "Time": time,
         "Vibe": vibeText,
-        "Message": "She picked the date! See you then. 💞"
+        "Message": "Anahit picked the date! See you then. 💞"
       })
     })
     .then(r => r.json())
