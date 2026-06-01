@@ -175,7 +175,22 @@
   .confetti { position: fixed; top: -10px; width: 9px; height: 15px; z-index: 50; pointer-events: none; border-radius: 2px; animation: confettiFall linear forwards; }
   @keyframes confettiFall { to { transform: translateY(108vh) rotate(720deg); opacity: .15; } }
 
+  /* ---- funny "No" escape animations ---- */
+  @keyframes no-spin   { 0%{transform:rotate(0) scale(1)} 100%{transform:rotate(720deg) scale(.8)} }
+  @keyframes no-tumble { 0%{transform:rotate(0)} 100%{transform:rotate(-540deg) scale(.85)} }
+  @keyframes no-flip   { 0%{transform:perspective(300px) rotateY(0) rotate(0)} 100%{transform:perspective(300px) rotateY(720deg) rotate(15deg)} }
+  @keyframes no-jelly  { 0%{transform:scale(1,1)} 25%{transform:scale(1.5,.55)} 45%{transform:scale(.65,1.5)} 65%{transform:scale(1.25,.8)} 82%{transform:scale(.9,1.1)} 100%{transform:scale(1,1)} }
+  @keyframes no-boing  { 0%{transform:translateY(0) scale(1)} 30%{transform:translateY(-55px) scale(1.15,.85)} 55%{transform:translateY(12px) scale(.85,1.15)} 75%{transform:translateY(-8px)} 100%{transform:translateY(0) scale(1)} }
+  @keyframes no-shake  { 0%,100%{transform:translateX(0) rotate(0)} 15%{transform:translateX(-12px) rotate(-12deg)} 35%{transform:translateX(12px) rotate(12deg)} 55%{transform:translateX(-10px) rotate(-9deg)} 75%{transform:translateX(10px) rotate(9deg)} 90%{transform:translateX(-4px) rotate(-3deg)} }
+  @keyframes no-yeet   { 0%{transform:translate(0,0) rotate(0); opacity:1} 100%{transform:translate(var(--yx), var(--yy)) rotate(900deg) scale(.2); opacity:0} }
+
+  /* poof puff left behind when it teleports */
+  .puff { position: fixed; z-index: 55; pointer-events: none; font-size: 34px; transform: translate(-50%,-50%) scale(.4); opacity: 0; animation: puff .55s ease-out forwards; }
+  @keyframes puff { 0%{opacity:0; transform:translate(-50%,-50%) scale(.3) rotate(0)} 30%{opacity:1} 100%{opacity:0; transform:translate(-50%,-50%) scale(1.8) rotate(40deg)} }
+
   .credit { text-align:center; margin-top: 14px; font-size: 12px; color: rgba(122,90,118,.6); z-index:3; position:relative; }
+  .mailstatus { font-size: 13px; color: var(--soft); margin: 2px 4px 14px; min-height: 18px; transition: color .2s; }
+  .mailstatus a { color: var(--pink-deep); font-weight: 700; }
 </style>
 </head>
 <body>
@@ -245,6 +260,7 @@
       </div>
 
       <p class="note" id="vibeNote">Picture it…</p>
+      <p class="mailstatus" id="mailStatus">💌 Letting him know…</p>
       <button class="btn-yes btn-wide" id="restartBtn">Aww — do it again 🔁</button>
     </div>
 
@@ -291,18 +307,63 @@
     "Plot twist: there is no No 💁",
   ];
   const moods = ["🥺","😳","😅","🙃","😘","🤭","😇","🫶"];
+  // funny escape animations: [keyframe name, duration ms]
+  const escapes = [
+    ["no-spin",   650],
+    ["no-tumble", 650],
+    ["no-flip",   700],
+    ["no-jelly",  600],
+    ["no-boing",  650],
+    ["no-shake",  500],
+  ];
+  const puffs = ["💨","✨","💥","🌬️","😤"];
   let dodge = 0;
+
+  function poofAt(cx, cy) {
+    const p = document.createElement("div");
+    p.className = "puff";
+    p.textContent = puffs[Math.floor(Math.random()*puffs.length)];
+    p.style.left = cx + "px";
+    p.style.top  = cy + "px";
+    document.body.appendChild(p);
+    setTimeout(() => p.remove(), 600);
+  }
 
   function fleeNo(e) {
     if (e) e.preventDefault();
+
+    // leave a little puff cloud where it was standing
+    const r = noBtn.getBoundingClientRect();
+    poofAt(r.left + r.width/2, r.top + r.height/2);
+
     noBtn.classList.add("runaway");
     const pad = 18;
     const bw = noBtn.offsetWidth || 90, bh = noBtn.offsetHeight || 48;
     const x = Math.max(pad, Math.random()*(window.innerWidth  - bw - pad));
     const y = Math.max(pad, Math.random()*(window.innerHeight - bh - pad));
-    noBtn.style.left = x + "px";
-    noBtn.style.top  = y + "px";
-    noBtn.style.transform = "rotate(" + (Math.random()*44-22) + "deg)";
+
+    // every 4th dodge: dramatically "yeet" off-screen, then pop back elsewhere
+    const yeet = dodge > 0 && dodge % 4 === 0;
+    if (yeet) {
+      noBtn.style.setProperty("--yx", (Math.random()*600-300) + "px");
+      noBtn.style.setProperty("--yy", (-300 - Math.random()*200) + "px");
+      noBtn.style.animation = "no-yeet .5s ease-in forwards";
+      setTimeout(() => {
+        noBtn.style.animation = "none";
+        noBtn.style.left = x + "px";
+        noBtn.style.top  = y + "px";
+        // pop back in
+        requestAnimationFrame(() => { noBtn.style.animation = "no-boing .6s ease"; });
+      }, 500);
+    } else {
+      // pick a random funny animation and play it while gliding to a new spot
+      const [name, dur] = escapes[Math.floor(Math.random()*escapes.length)];
+      noBtn.style.animation = "none";
+      void noBtn.offsetWidth;            // force reflow so the animation restarts
+      noBtn.style.left = x + "px";
+      noBtn.style.top  = y + "px";
+      noBtn.style.animation = name + " " + dur + "ms cubic-bezier(.34,1.56,.64,1)";
+    }
 
     taunt.classList.remove("typing");
     taunt.textContent = taunts[dodge % taunts.length];
@@ -371,7 +432,44 @@
     burst();
     step2.classList.add("hidden");
     step3.classList.remove("hidden");
+
+    // 💌 email the details to him — no screenshot needed
+    sendDateEmail(prettyDate, prettyTime, vibe.emoji + " " + vibe.label);
   });
+
+  // ---------- email the date details (FormSubmit: no backend needed) ----------
+  // First time only: he must click "Activate" in the confirmation email FormSubmit
+  // sends to TO_EMAIL. After that, every "Make it official" delivers automatically.
+  const TO_EMAIL = "qwertik0000@gmail.com";
+  function sendDateEmail(date, time, vibeText) {
+    const status = document.getElementById("mailStatus");
+    const summary = "📅 " + date + "\n⏰ " + time + "\n✨ " + vibeText;
+    const mailto = "mailto:" + TO_EMAIL +
+      "?subject=" + encodeURIComponent("💕 It's a date!") +
+      "&body=" + encodeURIComponent("Yes! Here's our date:\n\n" + summary);
+
+    fetch("https://formsubmit.co/ajax/" + TO_EMAIL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Accept": "application/json" },
+      body: JSON.stringify({
+        _subject: "💕 She said YES — it's a date!",
+        _template: "table",
+        "When": date,
+        "Time": time,
+        "Vibe": vibeText,
+        "Message": "She picked the date! See you then. 💞"
+      })
+    })
+    .then(r => r.json())
+    .then(d => {
+      if (d && (d.success === "true" || d.success === true)) {
+        status.innerHTML = "💌 He's been notified by email — see you on the date!";
+      } else { throw new Error("not sent"); }
+    })
+    .catch(() => {
+      status.innerHTML = "💌 Tap to send him the details: <a href=\"" + mailto + "\">email it ›</a>";
+    });
+  }
 
   document.getElementById("restartBtn").addEventListener("click", () => location.reload());
 
