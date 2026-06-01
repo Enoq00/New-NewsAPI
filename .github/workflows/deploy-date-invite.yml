@@ -3,6 +3,7 @@ name: Deploy date-invite to GitHub Pages
 on:
   push:
     branches:
+      - master
       - claude/dating-preference-page-bOu7e
     paths:
       - "docs/**"
